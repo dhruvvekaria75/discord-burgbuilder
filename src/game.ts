@@ -183,6 +183,8 @@ export class Game {
 
         await this.updateBoard();
 
+        this.drag++;
+
         if(this.turnPlayer >= this.players.length-1) {
             this.turnPlayer = 0;
         } else {
