@@ -6,14 +6,22 @@ export class GameManager {
     private games: Array<Game> = new Array<Game>();
     private nextGame: Game = new Game();
 
+    /**
+     * creates a custom game and adds to games array
+     * @param message message used to request new game
+     */
     createCustomGame(message: discord.Message) {
-        let newGame = new Game();
+        let newGame = new Game(message.author);
         this.games.push(newGame);
 
-        newGame.players.push(message.author);
+        newGame.joinPlayer(message.author);
         message.reply("The game with the id " + newGame.id + " has been created!\nJoin it by typing !cb join " + newGame.id);
     }
 
+    /**
+     * adds a user to a custom game
+     * @param message message used to request join
+     */
     joinGame(message: discord.Message) {
         let split = message.content.split(" ");
         let game = this.games.find(g => g.id == <number><unknown>split[2]);
@@ -21,40 +29,68 @@ export class GameManager {
 
         if(!game) return;
 
-        if(game.players.length < 4) {
-            message.reply("Sorry the game is already full");
+        if(game.joinPlayer(message.author)) {
+            message.reply("You joined the game "+ split[2]);
         } else {
-            game.players.push(message.author);
-            message.reply("You joined the game. Wait for it to start");
-            if(game.players.length >= 4) {
-                game.start();
-            }
+            message.reply("Sorry the game's already full!");
         }
     }
 
+    /**
+     * add a user to the next open game
+     * creates a new game when neccessary
+     *  @param message message used to request queue
+     */
     queue(message: discord.Message) {
-        if(this.nextGame.players.length < 2) {
-            this.nextGame.players.push(message.author);
-            message.reply("You joined the queue");
-            if(this.nextGame.players.length >= 2) {
-                this.nextGame.start();
-            }
+        if(this.nextGame.joinPlayer(message.author)) {
+            message.reply("You joined a game successfully");
         } else {
             this.nextGame = new Game();
-            this.games.push(this.nextGame);
-            this.nextGame.players.push(message.author);
-            message.reply("You joined the queue");
+            if(this.nextGame.joinPlayer(message.author)) {
+                message.reply("You joined a game successfully");
+            } else {
+                message.reply("There has been an error. Please try again later");
+            }
         }
     }
 
+    /**
+     * create a game for one person (for testing only)
+     * @param message message used to request solo game
+     */
     soloGame(message: discord.Message) {
         let newGame = new Game();
         this.games.push(newGame);
 
-        newGame.players.push(message.author);
-        message.reply("The game with the id " + newGame.id + " has been created!\nYou it by typing !cb join " + newGame.id);
+        newGame.joinPlayer(message.author);
         newGame.start();
+
+        message.reply("The game with the id " + newGame.id + " has been created!");
     }
 
+    startGame(message: discord.Message) {
+        let game = this.games.find(g => g.creator == message.author);
 
+        if(game) {
+            game.start();
+        } else {
+            message.reply("You have to be the owner of a game to start it!");
+        }
+    }
+
+    /**
+     * removes a user from game and removes it when all have left
+     * @param message message used to request leave
+     */
+    leaveGame(message: discord.Message) {
+        let game = this.games.find(g => g.players.includes(message.author));
+
+        game.leavePlayer(message.author);
+
+        message.reply("You left the game");
+
+        if(game.players.length == 0) {
+            this.games.splice(this.games.findIndex(g => g == game), 1);
+        }
+    }
 }

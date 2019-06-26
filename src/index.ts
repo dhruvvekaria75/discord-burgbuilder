@@ -16,12 +16,6 @@ client.login(config.token);
 
 Game.CLIENT = client;
 
-/*client.on('message', message => {
-    let game = new Game();
-    game.players.push(message.author);
-    game.start();
-});*/
-
 //init handlers
 let gM = new GameManager();
 messageHandler.init(client, gM);

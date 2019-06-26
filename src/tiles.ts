@@ -1,4 +1,5 @@
 import * as discord from "discord.js";
+import { CastleComplex } from "./game";
 
 export abstract class Tile {
     positionX: number;
@@ -7,6 +8,7 @@ export abstract class Tile {
     rotatable: boolean;
     rotation: number = 0; 
     owner: discord.User;
+    complex: CastleComplex;
 }
 
 export class CastleWall2 extends Tile {
