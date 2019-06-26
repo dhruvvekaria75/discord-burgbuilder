@@ -2,6 +2,7 @@
   "name": "dab",
   "version": "1.0.0",
   "description": "A autobattle game written as a discord bot",
+  "repository": {"url": "https://github.com/Drachenfrucht1/discord-burgbuilder", "type": "git"},
   "main": "./src/index.js",
   "scripts": {
     "start": "tsc && node ./src/index.js",

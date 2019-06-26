@@ -1,30 +1,31 @@
 import * as discord from "discord.js";
 import { GameManager } from "./gameManager";
+let config = require("../config.json");
 
 export function init(client: discord.Client, gM: GameManager) {
     client.on('message', message => {
         let split = message.content.split(" ");
         let msg = split[0] + ' ' + split[1];
         switch(msg) {
-            case '!bb queue':
+            case config.beta ? '!bbb queue': '!bb queue':
                 gM.queue(message);
                 return;
-            case '!bb game':
+            case config.beta ? '!bbb game': '!bb game':
                 gM.createCustomGame(message);
                 return;
-            case '!bb join': 
+            case config.beta ? '!bbb join': '!bb join':
                 gM.joinGame(message);
                 return;
             //only for testing purposes
-            case '!bb solo':
-                gM.soloGame(message);
+            case '!bbb solo':
+                if(config.beta)gM.soloGame(message);
                 break;
-            case '!bb leave':
+            case config.beta ? '!bbb leave': '!bb leave':
                 gM.leaveGame(message);
                 break;
-            case '!bb start':
+            case config.beta ? '!bbb start': '!bb start':
                 gM.startGame(message);
-            case '!bb help':
+            case config.beta ? '!bbb help': '!bb help':
                 message.channel.send(printHelp());
             default:
                 break;

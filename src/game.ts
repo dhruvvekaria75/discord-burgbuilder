@@ -1,5 +1,6 @@
 import * as discord from "discord.js";
 import {Tile, Castle, CastleWall2, CastleWall3, Grass, White} from "./tiles";
+let config = require("../config.json");
 
 var NEWID: number = 0; // id for new game
 
@@ -9,7 +10,7 @@ const reactionEmoji = ['0⃣','1⃣','2⃣','3⃣','4⃣','5⃣','6⃣','7⃣','
 //white tile
 const WHITE = new White();
 const MAXPLAYER = 4; //max number of players in a game
-const TURNS = 10;
+const TURNS = config.beta ? 10 : 40;
 
 export class Game {
     id: number; //unique id of game
@@ -616,7 +617,7 @@ export class Game {
             this.points[this.players.findIndex(u => u == maxUser)] = this.points[this.players.findIndex(u => u == maxUser)] + max;
         }
         
-        let msg = "The Game has ended\nLeaderboard:";
+        let msg = "The Game has ended\nLeaderboard:\n";
         let index = 0;
         let p2 = new Array<discord.User>(...this.players);
 
@@ -625,16 +626,16 @@ export class Game {
             index = this.points.findIndex(p => p == max)
             switch(i) {
                 case 0:
-                    msg += ":first_place:" + this.players[index].username + "\n"; 
+                    msg += ":first_place:" + this.players[index].username + " " + max + " Points\n"; 
                     break;
                 case 1:
-                    msg += ":second_place:" + this.players[index].username + "\n"; 
+                    msg += ":second_place:" + this.players[index].username + " " + max + " Points\n"; 
                     break;
                 case 2:
-                    msg += ":third_place:" + this.players[index].username + "\n"; 
+                    msg += ":third_place:" + this.players[index].username + " " + max + " Points\n"; 
                     break;
                 default:
-                    msg += ":medal:" + this.players[index].username + "\n"; 
+                    msg += ":medal:" + this.players[index].username + " " + max + " Points\n";
                     break;
             }
 
