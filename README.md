@@ -1,16 +1,16 @@
-# Discord Castlebuilder #
-Castlebuilder is a game for discord.<br>
+# Discord Burgbuilder #
+Burgbuilder is a game for discord.<br>
 It is inspired by the board game Carcassonne.<br>
 Created for [Discord Hack Week 2019](https://blog.discordapp.com/discord-community-hack-week-build-and-create-alongside-us-6b2a7b7bba33)
 
-Join the [Castlebuilder discord server](https://discord.gg/ae2avNc) to get acces to the hosted bot.
+Join the [Burgbuilder discord server](https://discord.gg/ae2avNc) to get acces to the hosted bot.
 
 ## Usage ##
-Type ```!cb help``` to view the help page<br>
-Type ```!cb queue``` to join the queue and wait for a random game<br>
-Type ```!cb game``` to create a custom game to play with your friends.<br>
-Type ```!cb join <id>``` to join a custom game<br>
-Type ```!cb start``` to start a game (only possible when you created a custom game first).<br>
+Type ```!bb help``` to view the help page<br>
+Type ```!bb queue``` to join the queue and wait for a random game<br>
+Type ```!bb game``` to create a custom game to play with your friends.<br>
+Type ```!bb join <id>``` to join a custom game<br>
+Type ```!bb start``` to start a game (only possible when you created a custom game first).<br>
 
 ### Game ###
 At the beginning of the game you will be messaged with a blank 10x10 board.<br>
@@ -27,10 +27,10 @@ After that you will see your placement on the board.<br>
 
 ### Tile placement ###
 There are 4 types of tiles as of now.<br>
-- ![grass](https://github.com/Drachenfrucht1/discord-castlebuilder/blob/master/img/grass.png?raw=true)<br>
-- ![castle](https://github.com/Drachenfrucht1/discord-castlebuilder/blob/master/img/castle.png?raw=true)<br>
-- ![castle_2](https://github.com/Drachenfrucht1/discord-castlebuilder/blob/master/img/castle_wall2_0.png?raw=true)<br>
-- ![castle_3](https://github.com/Drachenfrucht1/discord-castlebuilder/blob/master/img/castle_wall3_0.png?raw=true)<br>
+- ![grass](https://github.com/Drachenfrucht1/discord-burgbuilder/blob/master/img/grass.png?raw=true)<br>
+- ![castle](https://github.com/Drachenfrucht1/discord-burgbuilder/blob/master/img/castle.png?raw=true)<br>
+- ![castle_2](https://github.com/Drachenfrucht1/discord-burgbuilder/blob/master/img/castle_wall2_0.png?raw=true)<br>
+- ![castle_3](https://github.com/Drachenfrucht1/discord-burgbuilder/blob/master/img/castle_wall3_0.png?raw=true)<br>
 
 Tiles can only be placed according to specific rules.<br>
 If you try to place a differently your turn will not count.<br>
@@ -51,4 +51,4 @@ The player with the most points will (obviously) win the game.<br>
 
 ## Contribute ##
 Feel free to contribute or file an issue if you have a bug or feature request.<br>
-If you have questions you can [join the Castlebuilder discord server](https://discord.gg/ae2avNc).
+If you have questions you can [join the Burgbuilder discord server](https://discord.gg/ae2avNc).
