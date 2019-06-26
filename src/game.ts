@@ -10,7 +10,7 @@ const reactionEmoji = ['0⃣','1⃣','2⃣','3⃣','4⃣','5⃣','6⃣','7⃣','
 //white tile
 const WHITE = new White();
 const MAXPLAYER = 4; //max number of players in a game
-const TURNS = config.beta ? 10 : 40;
+const TURNS = config.beta ? 5 : 40;
 
 export class Game {
     id: number; //unique id of game
@@ -24,7 +24,7 @@ export class Game {
     //for eval
     private castles: Array<CastleComplex> = new Array<CastleComplex>(); //all castles found
     private points: Array<number> = new Array<number>(); //points player get (same index as players)
-
+    private checked: Array<Array<boolean>> = new Array<Array<boolean>>(10);
     static CLIENT: discord.Client;
 
     constructor(creator?: discord.User) {
@@ -599,6 +599,14 @@ export class Game {
      * 1 point per castle tile owned when you own the most tiles in the castle
      */
     private evaluate(): void {
+
+        for(let x = 0; x < 10; x++) {
+            this.checked[x] = new Array<boolean>(10);
+            for(let y = 0; y < 10; y++) {
+                this.checked[x][y] = false;
+            }
+        }
+
         for(let x = 0; x < 10; x++) {
             for(let y = 0; y < 10; y++) {
                 this.evalTile(x, y);
@@ -612,8 +620,10 @@ export class Game {
             this.castles[i].owners.forEach((num, user) => {
                 if(num > max) {
                     maxUser = user;
+                    max = num;
                 }
             });
+            if(this.castles[i].finished) max += 2;
             this.points[this.players.findIndex(u => u == maxUser)] = this.points[this.players.findIndex(u => u == maxUser)] + max;
         }
         
@@ -651,53 +661,61 @@ export class Game {
      * evaluates a tile and adds it if neccessary to a castlecomplex
      * @param x x position of tile
      * @param y y position of tile
+     * 
      */
     private evalTile(x, y) {
         let tTile;
         let tile = this.tiles[x][y];
+        if(this.checked[x][y]) return;
+        this.checked[x][y] = true; 
         if(tile instanceof Grass) return;
+        if(tile instanceof White) return;
         if(tile instanceof Castle) {
             tTile = y == 9 ? WHITE : this.tiles[x][y+1];
+            if(tTile instanceof White) {
+                if(!tile.complex) {
+                    let complex = new CastleComplex(false);
+                    tile.complex = complex;
+                    this.castles.push(complex);
+                } else tile.complex.finished = false;
+            }
             if(tTile instanceof Castle ||
                 (tTile instanceof CastleWall2 && tTile.rotation == 270) ||
                 (tTile instanceof CastleWall3 && (tTile.rotation == 180 || tTile.rotation == 270))) {
-                if(tTile.complex != (null || undefined)) {
-                    tile.complex = tTile.complex;
-                    tTile.complex.x.push(x);
-                    tTile.complex.y.push(y);
-                } else if(tile.complex != (null || undefined)) {
-                    tTile.complex = tile.complex;
-                    tile.complex.x.push(x);
-                    tile.complex.y.push(y);
-                } else {
-                    tile.complex = new CastleComplex();
-                    this.castles.push(tile.complex);
-                    tTile.complex = tile.complex;
-                    tile.complex.addOwner(tile.owner);
-                    tile.complex.addOwner(tTile.owner);
-                }
+                this.setComplex(tile, tTile);
             }
 
             tTile = x == 9 ? WHITE : this.tiles[x+1][y];
+            if(tTile instanceof White) {
+                if(!tile.complex) {
+                    let complex = new CastleComplex(false);
+                    tile.complex = complex;
+                    this.castles.push(complex);
+                } else tile.complex.finished = false;
+            }
             if(tTile instanceof Castle ||
                 (tTile instanceof CastleWall2 && tTile.rotation == 180) ||
                 (tTile instanceof CastleWall3 && (tTile.rotation == 90 || tTile.rotation == 180))) {
-                if(tTile.complex != (null || undefined)) {
-                    tile.complex = tTile.complex;
-                    tTile.complex.x.push(x);
-                    tTile.complex.y.push(y);
-                } else if(tile.complex != (null || undefined)) {
-                    tTile.complex = tile.complex;
-                    tile.complex.x.push(x);
-                    tile.complex.y.push(y);
-                } else {
-                    tile.complex = new CastleComplex();
-                    this.castles.push(tile.complex);
-                    tTile.complex = tile.complex;
-                    tile.complex.addOwner(tile.owner);
-                    tile.complex.addOwner(tTile.owner);
-                }
-            }   
+                this.setComplex(tile, tTile);
+            }  
+
+            tTile = y == 0 ? WHITE : this.tiles[x][y-1];
+            if(tTile instanceof White) {
+            if(!tile.complex) {
+                let complex = new CastleComplex(false);
+                tile.complex = complex;
+                this.castles.push(complex);
+                } else tile.complex.finished = false;
+            }
+
+            tTile = x == 0 ? WHITE : this.tiles[x-1][y];
+            if(tTile instanceof White) {
+            if(!tile.complex) {
+                let complex = new CastleComplex(false);
+                tile.complex = complex;
+                this.castles.push(complex);
+                } else tile.complex.finished = false;
+            }
         }
 
         //castlewall 2
@@ -705,48 +723,34 @@ export class Game {
             //rotation 0
             if(tile.rotation == 0) {
                 tTile = x == 9 ? WHITE : this.tiles[x+1][y];
+                if(tTile instanceof White) {
+                if(!tile.complex) {
+                    let complex = new CastleComplex(false);
+                    tile.complex = complex;
+                    this.castles.push(complex);
+                    } else tile.complex.finished = false;
+                }
                 if(tTile instanceof Castle ||
                     (tTile instanceof CastleWall2 && tTile.rotation == 180) ||
                     (tTile instanceof CastleWall3 && (tTile.rotation == 90 || tTile.rotation == 180))) {
-                    if(tTile.complex != (null || undefined)) {
-                        tile.complex = tTile.complex;
-                        tTile.complex.x.push(x);
-                        tTile.complex.y.push(y);
-                    } else if(tile.complex != (null || undefined)) {
-                        tTile.complex = tile.complex;
-                        tile.complex.x.push(x);
-                        tile.complex.y.push(y);
-                    } else {
-                        tile.complex = new CastleComplex();
-                        this.castles.push(tile.complex);
-                        tTile.complex = tile.complex;
-                        tile.complex.addOwner(tile.owner);
-                        tile.complex.addOwner(tTile.owner);
-                    }
+                    this.setComplex(tile, tTile);
                 } 
             } 
 
             //rotation 90
             if(tile.rotation == 90) {
                 tTile = y == 9 ? WHITE : this.tiles[x][y+1];
+                if(tTile instanceof White) {
+                if(!tile.complex) {
+                    let complex = new CastleComplex(false);
+                    tile.complex = complex;
+                    this.castles.push(complex);
+                    } else tile.complex.finished = false;
+                }
                 if(tTile instanceof Castle ||
                     (tTile instanceof CastleWall2 && tTile.rotation == 270) ||
                     (tTile instanceof CastleWall3 && (tTile.rotation == 180 || tTile.rotation == 270))) {
-                    if(tTile.complex != (null || undefined)) {
-                        tile.complex = tTile.complex;
-                        tTile.complex.x.push(x);
-                        tTile.complex.y.push(y);
-                    } else if(tile.complex != (null || undefined)) {
-                        tTile.complex = tile.complex;
-                        tile.complex.x.push(x);
-                        tile.complex.y.push(y);
-                    } else {
-                        tile.complex = new CastleComplex();
-                        this.castles.push(tile.complex);
-                        tTile.complex = tile.complex;
-                        tile.complex.addOwner(tile.owner);
-                        tile.complex.addOwner(tTile.owner);
-                    }
+                    this.setComplex(tile, tTile);
                 } 
             }
         }
@@ -756,103 +760,136 @@ export class Game {
             //rotation 0
             if(tile.rotation == 0) {
                 tTile = x == 9 ? WHITE : this.tiles[x+1][y];
+                if(tTile instanceof White) {
+                if(!tile.complex) {
+                    let complex = new CastleComplex(false);
+                    tile.complex = complex;
+                    this.castles.push(complex);
+                    } else tile.complex.finished = false;
+                }
                 if(tTile instanceof Castle ||
                     (tTile instanceof CastleWall2 && tTile.rotation == 180) ||
                     (tTile instanceof CastleWall3 && (tTile.rotation == 90 || tTile.rotation == 180))) {
-                    if(tTile.complex != (null || undefined)) {
-                        tile.complex = tTile.complex;
-                        tTile.complex.x.push(x);
-                        tTile.complex.y.push(y);
-                    } else if(tile.complex != (null || undefined)) {
-                        tTile.complex = tile.complex;
-                        tile.complex.x.push(x);
-                        tile.complex.y.push(y);
-                    } else {
-                        tile.complex = new CastleComplex();
-                        this.castles.push(tile.complex);
-                        tTile.complex = tile.complex;
-                        tile.complex.addOwner(tile.owner);
-                        tile.complex.addOwner(tTile.owner);
-                    }
+                    this.setComplex(tile, tTile);
                 } 
 
                 tTile = y == 9 ? WHITE : this.tiles[x][y+1];
+                if(tTile instanceof White) {
+                if(!tile.complex) {
+                    let complex = new CastleComplex(false);
+                    tile.complex = complex;
+                    this.castles.push(complex);
+                    } else tile.complex.finished = false;
+                }
                 if(tTile instanceof Castle ||
                     (tTile instanceof CastleWall2 && tTile.rotation == 270) ||
                     (tTile instanceof CastleWall3 && (tTile.rotation == 180 || tTile.rotation == 270))) {
-                    if(tTile.complex != (null || undefined)) {
-                        tile.complex = tTile.complex;
-                        tTile.complex.x.push(x);
-                        tTile.complex.y.push(y);
-                    } else if(tile.complex != (null || undefined)) {
-                        tTile.complex = tile.complex;
-                        tile.complex.x.push(x);
-                        tile.complex.y.push(y);
-                    } else {
-                        tile.complex = new CastleComplex();
-                        this.castles.push(tile.complex);
-                        tTile.complex = tile.complex;
-                        tile.complex.addOwner(tile.owner);
-                        tile.complex.addOwner(tTile.owner);
-                    }
+                    this.setComplex(tile, tTile);
                 } 
             } 
 
             //rotation 90
             if(tile.rotation == 90) {
                 tTile = y == 9 ? WHITE : this.tiles[x][y+1];
+                if(tTile instanceof White) {
+                if(!tile.complex) {
+                    let complex = new CastleComplex(false);
+                    tile.complex = complex;
+                    this.castles.push(complex);
+                    } else tile.complex.finished = false;
+                }
                 if(tTile instanceof Castle ||
                     (tTile instanceof CastleWall2 && tTile.rotation == 270) ||
                     (tTile instanceof CastleWall3 && (tTile.rotation == 180 || tTile.rotation == 270))) {
-                    if(tTile.complex != (null || undefined)) {
-                        tile.complex = tTile.complex;
-                        tTile.complex.x.push(x);
-                        tTile.complex.y.push(y);
-                    } else if(tile.complex != (null || undefined)) {
-                        tTile.complex = tile.complex;
-                        tile.complex.x.push(x);
-                        tile.complex.y.push(y);
-                    } else {
-                        tile.complex = new CastleComplex();
-                        this.castles.push(tile.complex);
-                        tTile.complex = tile.complex;
-                        tile.complex.addOwner(tile.owner);
-                        tile.complex.addOwner(tTile.owner);
-                    }
+                    this.setComplex(tile, tTile);
                 } 
+                tTile = x == 0 ? WHITE : this.tiles[x-1][y];
+                if(tTile instanceof White) {
+                if(!tile.complex) {
+                    let complex = new CastleComplex(false);
+                    tile.complex = complex;
+                    this.castles.push(complex);
+                    } else tile.complex.finished = false;
+                }
+            }
+
+            //rotation 180
+            if(tile.rotation == 180) {
+                tTile = y == 0 ? WHITE : this.tiles[x][y-1];
+                if(tTile instanceof White) {
+                if(!tile.complex) {
+                    let complex = new CastleComplex(false);
+                    tile.complex = complex;
+                    this.castles.push(complex);
+                    } else tile.complex.finished = false;
+                }
+
+                tTile = x == 0 ? WHITE : this.tiles[x-1][y];
+                if(tTile instanceof White) {
+                if(!tile.complex) {
+                    let complex = new CastleComplex(false);
+                    tile.complex = complex;
+                    this.castles.push(complex);
+                    } else tile.complex.finished = false;
+                }
             }
 
             //rotation 270
             if(tile.rotation == 270) {
                 tTile = x == 9 ? WHITE : this.tiles[x+1][y];
+                if(tTile instanceof White) {
+                if(!tile.complex) {
+                    let complex = new CastleComplex(false);
+                    tile.complex = complex;
+                    this.castles.push(complex);
+                    } else tile.complex.finished = false;
+                }
                 if(tTile instanceof Castle ||
                     (tTile instanceof CastleWall2 && tTile.rotation == 180) ||
                     (tTile instanceof CastleWall3 && (tTile.rotation == 90 || tTile.rotation == 180))) {
-                    if(tTile.complex != (null || undefined)) {
-                        tile.complex = tTile.complex;
-                        tTile.complex.x.push(x);
-                        tTile.complex.y.push(y);
-                    } else if(tile.complex != (null || undefined)) {
-                        tTile.complex = tile.complex;
-                        tile.complex.x.push(x);
-                        tile.complex.y.push(y);
-                    } else {
-                        tile.complex = new CastleComplex();
-                        this.castles.push(tile.complex);
-                        tTile.complex = tile.complex;
-                        tile.complex.addOwner(tile.owner);
-                        tile.complex.addOwner(tTile.owner);
-                    }
-                } 
+                    this.setComplex(tile, tTile);
+                }
+                tTile = y == 0 ? WHITE : this.tiles[x][y-1];
+                if(tTile instanceof White) {
+                if(!tile.complex) {
+                    let complex = new CastleComplex(false);
+                    tile.complex = complex;
+                    this.castles.push(complex);
+                    } else tile.complex.finished = false;
+                }
             } 
+        }
+    }
+
+    /**
+     * add two tiles to a complex 
+     * @param tile tile in evaluation
+     * @param tTile test tile
+     */
+    setComplex(tile: Tile, tTile: Tile) {
+        if(tile.complex != (null || undefined)) {
+            tTile.complex = tile.complex;
+            tile.complex.addOwner(tTile.owner);
+        } else if(tTile.complex != (null || undefined)) {
+            tile.complex = tTile.complex;
+            tile.complex.addOwner(tile.owner);
+        } else {
+            tile.complex = new CastleComplex();
+            this.castles.push(tile.complex);
+            tTile.complex = tile.complex;
+            tile.complex.addOwner(tile.owner);
+            tile.complex.addOwner(tTile.owner);
         }
     }
 }
 
 export class CastleComplex {
-    x: Array<number> = new Array<number>();
-    y: Array<number> = new Array<number>();
+    finished: boolean = true;
     owners: Map<discord.User, number> = new Map<discord.User, number>();
+
+    constructor(finished?:boolean) {
+        if(finished) this.finished = finished;
+    }
 
     addOwner(user: discord.User) {
         if(this.owners.has(user)) {

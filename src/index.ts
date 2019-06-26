@@ -9,7 +9,7 @@ const config = require("../config.json");
 const client = new discord.Client();
 
 client.once('ready', () => {
-    console.log("Discord Burgnuilder ready");
+    console.log("Discord Burgbuilder ready");
 });
 
 client.login(config.token);
