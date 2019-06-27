@@ -7,6 +7,7 @@ Join the [Burgbuilder discord server](https://discord.gg/ae2avNc) to get acces t
 
 ## Usage ##
 Type ```!bb help``` to view the help page<br>
+Type ```!bb rotation``` to get an explanation on the reaction emojis<br>
 Type ```!bb queue``` to join the queue and wait for a random game<br>
 Type ```!bb game``` to create a custom game to play with your friends.<br>
 Type ```!bb join <id>``` to join a custom game<br>

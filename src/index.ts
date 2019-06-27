@@ -10,12 +10,13 @@ const client = new discord.Client();
 
 client.once('ready', () => {
     console.log("Discord Burgbuilder ready");
+
+    Game.CLIENT = client;
+
+    client.user.setPresence({game: {name: "Burgbuilder"}, status: "online"});
+
+    let gM = new GameManager();
+    messageHandler.init(client, gM);
 });
 
 client.login(config.token);
-
-Game.CLIENT = client;
-
-//init handlers
-let gM = new GameManager();
-messageHandler.init(client, gM);

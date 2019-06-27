@@ -15,7 +15,7 @@ export class GameManager {
         this.games.push(newGame);
 
         newGame.joinPlayer(message.author);
-        message.reply("The game with the id " + newGame.id + " has been created!\nJoin it by typing !cb join " + newGame.id);
+        message.reply("The game with the id " + newGame.id + " has been created!\nJoin it by typing !bb join " + newGame.id);
     }
 
     /**
