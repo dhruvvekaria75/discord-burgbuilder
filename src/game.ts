@@ -98,7 +98,7 @@ export class Game {
             await message.react("8⃣");
             await message.react("9⃣");
             await message.react("🔟");
-            let col1 = message.createReactionCollector(filter, {time: 60000});
+            let col1 = message.createReactionCollector(filter);
             col1.on('collect', r => {emojis.push(<discord.ReactionEmoji>r.emoji); col1.stop()});
             //row
             message = <discord.Message>await this.players[this.turnPlayer].send("Row");
@@ -112,7 +112,7 @@ export class Game {
             await message.react("🇭");
             await message.react("🇮");
             await message.react("🇯");
-            let col2 = message.createReactionCollector(filter, {time: 60000});
+            let col2 = message.createReactionCollector(filter);
             col2.on('collect', r => {emojis.push(<discord.ReactionEmoji>r.emoji); col2.stop()});
             //rotation
             message = <discord.Message>await this.players[this.turnPlayer].send("Rotation");
@@ -120,7 +120,7 @@ export class Game {
             await message.react("🕕");
             await message.react("🕘");
             await message.react("🛑");
-            let col3 = message.createReactionCollector(filter, {time: 60000});
+            let col3 = message.createReactionCollector(filter);
             col3.on('collect', r => {
                 if(r.emoji.name == "🛑") {
                     this.parseEmojis(emojis);
@@ -250,14 +250,16 @@ export class Game {
         for(; rows <= 5; rows++) {
             msg += this.sendRow(rows) + "\n";
         }
-        for(let p of this.players) {
-            await p.send(msg)
-            let msg2 = "";
 
-            for(; rows <= 10; rows++) {
-                msg2 += this.sendRow(rows) + "\n";
-            }
-            await p.send(msg2)
+        let msg2 = "";
+
+        for(; rows <= 10; rows++) {
+            msg2 += this.sendRow(rows) + "\n";
+        }
+
+        for(let p of this.players) {
+            await p.send(msg);
+            await p.send(msg2);
         }
     }
 
@@ -607,8 +609,8 @@ export class Game {
             }
         }
 
-        for(let x = 0; x < 10; x++) {
-            for(let y = 0; y < 10; y++) {
+        for(let y = 0; y < 10; y++) {
+            for(let x = 0; x < 10; x++) {
                 this.evalTile(x, y);
             }
         }
@@ -670,51 +672,37 @@ export class Game {
         this.checked[x][y] = true; 
         if(tile instanceof Grass) return;
         if(tile instanceof White) return;
+
+        if(!tile.complex) {
+            let complex = new CastleComplex();
+            tile.complex = complex;
+            complex.addOwner(tile.owner);
+            this.castles.push(complex);
+        }
+
         if(tile instanceof Castle) {
             tTile = y == 9 ? WHITE : this.tiles[x][y+1];
             if(tTile instanceof White) {
-                if(!tile.complex) {
-                    let complex = new CastleComplex(false);
-                    tile.complex = complex;
-                    this.castles.push(complex);
-                } else tile.complex.finished = false;
-            }
-            if(tTile instanceof Castle ||
-                (tTile instanceof CastleWall2 && tTile.rotation == 270) ||
-                (tTile instanceof CastleWall3 && (tTile.rotation == 180 || tTile.rotation == 270))) {
+                tile.complex.finished = false;
+            } else {
                 this.setComplex(tile, tTile);
             }
 
             tTile = x == 9 ? WHITE : this.tiles[x+1][y];
             if(tTile instanceof White) {
-                if(!tile.complex) {
-                    let complex = new CastleComplex(false);
-                    tile.complex = complex;
-                    this.castles.push(complex);
-                } else tile.complex.finished = false;
-            }
-            if(tTile instanceof Castle ||
-                (tTile instanceof CastleWall2 && tTile.rotation == 180) ||
-                (tTile instanceof CastleWall3 && (tTile.rotation == 90 || tTile.rotation == 180))) {
+                tile.complex.finished = false;
+            } else {
                 this.setComplex(tile, tTile);
-            }  
+            }
 
             tTile = y == 0 ? WHITE : this.tiles[x][y-1];
             if(tTile instanceof White) {
-            if(!tile.complex) {
-                let complex = new CastleComplex(false);
-                tile.complex = complex;
-                this.castles.push(complex);
-                } else tile.complex.finished = false;
+                tile.complex.finished = false;
             }
 
             tTile = x == 0 ? WHITE : this.tiles[x-1][y];
             if(tTile instanceof White) {
-            if(!tile.complex) {
-                let complex = new CastleComplex(false);
-                tile.complex = complex;
-                this.castles.push(complex);
-                } else tile.complex.finished = false;
+                tile.complex.finished = false;
             }
         }
 
@@ -724,34 +712,40 @@ export class Game {
             if(tile.rotation == 0) {
                 tTile = x == 9 ? WHITE : this.tiles[x+1][y];
                 if(tTile instanceof White) {
-                if(!tile.complex) {
-                    let complex = new CastleComplex(false);
-                    tile.complex = complex;
-                    this.castles.push(complex);
-                    } else tile.complex.finished = false;
-                }
-                if(tTile instanceof Castle ||
-                    (tTile instanceof CastleWall2 && tTile.rotation == 180) ||
-                    (tTile instanceof CastleWall3 && (tTile.rotation == 90 || tTile.rotation == 180))) {
+                    tile.complex.finished = false;
+                } else {
                     this.setComplex(tile, tTile);
-                } 
+                }
             } 
 
             //rotation 90
             if(tile.rotation == 90) {
                 tTile = y == 9 ? WHITE : this.tiles[x][y+1];
                 if(tTile instanceof White) {
-                if(!tile.complex) {
-                    let complex = new CastleComplex(false);
-                    tile.complex = complex;
-                    this.castles.push(complex);
-                    } else tile.complex.finished = false;
-                }
-                if(tTile instanceof Castle ||
-                    (tTile instanceof CastleWall2 && tTile.rotation == 270) ||
-                    (tTile instanceof CastleWall3 && (tTile.rotation == 180 || tTile.rotation == 270))) {
+                    tile.complex.finished = false;
+                } else {
                     this.setComplex(tile, tTile);
-                } 
+                }
+            }
+
+            //rotation 180
+            if(tile.rotation == 180) {
+                tTile = x == 0 ? WHITE : this.tiles[x-1][y];
+                if(tTile instanceof White) {
+                    tile.complex.finished = false;
+                } else {
+                    this.setComplex(tile, tTile);
+                }
+            }
+
+            //rotation 270
+            if(tile.rotation == 270) {
+                tTile = y == 0 ? WHITE : this.tiles[x][y-1];
+                if(tTile instanceof White) {
+                    tile.complex.finished = false;
+                } else {
+                    this.setComplex(tile, tTile);
+                }
             }
         }
 
@@ -761,55 +755,31 @@ export class Game {
             if(tile.rotation == 0) {
                 tTile = x == 9 ? WHITE : this.tiles[x+1][y];
                 if(tTile instanceof White) {
-                if(!tile.complex) {
-                    let complex = new CastleComplex(false);
-                    tile.complex = complex;
-                    this.castles.push(complex);
-                    } else tile.complex.finished = false;
-                }
-                if(tTile instanceof Castle ||
-                    (tTile instanceof CastleWall2 && tTile.rotation == 180) ||
-                    (tTile instanceof CastleWall3 && (tTile.rotation == 90 || tTile.rotation == 180))) {
+                    tile.complex.finished = false;
+                } else {
                     this.setComplex(tile, tTile);
-                } 
+                }
 
                 tTile = y == 9 ? WHITE : this.tiles[x][y+1];
                 if(tTile instanceof White) {
-                if(!tile.complex) {
-                    let complex = new CastleComplex(false);
-                    tile.complex = complex;
-                    this.castles.push(complex);
-                    } else tile.complex.finished = false;
-                }
-                if(tTile instanceof Castle ||
-                    (tTile instanceof CastleWall2 && tTile.rotation == 270) ||
-                    (tTile instanceof CastleWall3 && (tTile.rotation == 180 || tTile.rotation == 270))) {
+                    tile.complex.finished = false;
+                } else {
                     this.setComplex(tile, tTile);
-                } 
+                }
             } 
 
             //rotation 90
             if(tile.rotation == 90) {
                 tTile = y == 9 ? WHITE : this.tiles[x][y+1];
                 if(tTile instanceof White) {
-                if(!tile.complex) {
-                    let complex = new CastleComplex(false);
-                    tile.complex = complex;
-                    this.castles.push(complex);
-                    } else tile.complex.finished = false;
-                }
-                if(tTile instanceof Castle ||
-                    (tTile instanceof CastleWall2 && tTile.rotation == 270) ||
-                    (tTile instanceof CastleWall3 && (tTile.rotation == 180 || tTile.rotation == 270))) {
+                    tile.complex.finished = false;
+                } else {
                     this.setComplex(tile, tTile);
-                } 
+                }
+
                 tTile = x == 0 ? WHITE : this.tiles[x-1][y];
                 if(tTile instanceof White) {
-                if(!tile.complex) {
-                    let complex = new CastleComplex(false);
-                    tile.complex = complex;
-                    this.castles.push(complex);
-                    } else tile.complex.finished = false;
+                    tile.complex.finished = false;
                 }
             }
 
@@ -817,20 +787,12 @@ export class Game {
             if(tile.rotation == 180) {
                 tTile = y == 0 ? WHITE : this.tiles[x][y-1];
                 if(tTile instanceof White) {
-                if(!tile.complex) {
-                    let complex = new CastleComplex(false);
-                    tile.complex = complex;
-                    this.castles.push(complex);
-                    } else tile.complex.finished = false;
+                    tile.complex.finished = false;
                 }
 
                 tTile = x == 0 ? WHITE : this.tiles[x-1][y];
                 if(tTile instanceof White) {
-                if(!tile.complex) {
-                    let complex = new CastleComplex(false);
-                    tile.complex = complex;
-                    this.castles.push(complex);
-                    } else tile.complex.finished = false;
+                    tile.complex.finished = false;
                 }
             }
 
@@ -838,24 +800,14 @@ export class Game {
             if(tile.rotation == 270) {
                 tTile = x == 9 ? WHITE : this.tiles[x+1][y];
                 if(tTile instanceof White) {
-                if(!tile.complex) {
-                    let complex = new CastleComplex(false);
-                    tile.complex = complex;
-                    this.castles.push(complex);
-                    } else tile.complex.finished = false;
-                }
-                if(tTile instanceof Castle ||
-                    (tTile instanceof CastleWall2 && tTile.rotation == 180) ||
-                    (tTile instanceof CastleWall3 && (tTile.rotation == 90 || tTile.rotation == 180))) {
+                    tile.complex.finished = false;
+                } else {
                     this.setComplex(tile, tTile);
                 }
+
                 tTile = y == 0 ? WHITE : this.tiles[x][y-1];
                 if(tTile instanceof White) {
-                if(!tile.complex) {
-                    let complex = new CastleComplex(false);
-                    tile.complex = complex;
-                    this.castles.push(complex);
-                    } else tile.complex.finished = false;
+                    tile.complex.finished = false;
                 }
             } 
         }
@@ -867,12 +819,15 @@ export class Game {
      * @param tTile test tile
      */
     setComplex(tile: Tile, tTile: Tile) {
-        if(tile.complex != (null || undefined)) {
+        if(tile.complex && tTile.complex) {
+            //TODO: testing
+            tile.complex.joinOwners(tTile.complex.owners);
+            tile.complex.finished = tTile.complex.finished ? tile.complex.finished : false;
+            this.castles.splice(this.castles.findIndex(c => c == tTile.complex), 1);
+            tTile.complex = tile.complex;
+        } else if(tile.complex != (null || undefined)) {
             tTile.complex = tile.complex;
             tile.complex.addOwner(tTile.owner);
-        } else if(tTile.complex != (null || undefined)) {
-            tile.complex = tTile.complex;
-            tile.complex.addOwner(tile.owner);
         } else {
             tile.complex = new CastleComplex();
             this.castles.push(tile.complex);
@@ -886,6 +841,7 @@ export class Game {
 export class CastleComplex {
     finished: boolean = true;
     owners: Map<discord.User, number> = new Map<discord.User, number>();
+    //tile: Array<Tile> = new Array<Tile>();
 
     constructor(finished?:boolean) {
         if(finished) this.finished = finished;
@@ -897,5 +853,15 @@ export class CastleComplex {
         } else {
             this.owners.set(user, 1);
         }
+    }
+
+    joinOwners(o: Map<discord.User, number>) {
+        o.forEach((num, user) => {
+            if(this.owners.has(user)) {
+                this.owners.set(user, this.owners.get(user) + num);
+            } else {
+                this.owners.set(user, num);
+            }
+        });
     }
 }
