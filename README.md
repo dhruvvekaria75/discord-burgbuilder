@@ -58,6 +58,7 @@ You will get a point per tile when you have contributed the most tile to the cas
 The player with the most points will (obviously) win the game.<br>
 
 ## Setup ##
+You have to setup the picture in the img folder as emojis to a guild the bot is a user of.
 ##### Without Docker ####
 1. Clone this repo
 2. ```cd``` into the directory and do ```npm install```
