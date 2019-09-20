@@ -1,5 +1,5 @@
 # Burgbuilder #
-![Banner](https://cdn.drachenfrucht1.de/banner.png)
+![Banner](https://github.com/Drachenfrucht1/discord-burgbuilder/blob/master/docs/banner_bb.png)
 
 Burgbuilder is a game for discord.<br>
 It is inspired by the board game Carcassonne.<br>
@@ -24,17 +24,17 @@ Type ```!bb start``` to start a game (only possible when you created a custom ga
 
 ### Game ###
 At the beginning of the game you will be messaged with a blank 10x10 board.<br>
-![start board](https://cdn.drachenfrucht1.de/start.png)
+![start board](https://github.com/Drachenfrucht1/discord-burgbuilder/blob/master/docs/start.png)
 
 When it's your turn you will be messaged with a tile you can now place on board.<br>
 React to the appropriate emojis to specify your prefered placement<br>
 Start reacting when all messages and reactions have fully loaded.<br>
 React to the stop sign to submit your choise.<br>
 The rotation is clockwise.<br>
-![tile placement](https://cdn.drachenfrucht1.de/selection.png)
+![tile placement](https://github.com/Drachenfrucht1/discord-burgbuilder/blob/master/docs/selection.png)
 
 After that you will see your placement on the board.<br>
-![](https://cdn.drachenfrucht1.de/placement.png)<br>
+![](https://github.com/Drachenfrucht1/discord-burgbuilder/blob/master/docs/placement.png)<br>
 There are 40 turns in total. With a total of 4 players per match it's 10 turns per player.
 
 ### Tile placement ###
