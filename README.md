@@ -76,5 +76,6 @@ Use `npm run start:dev` instead to start the bot in development mode.
 - [bufferutil](https://github.com/websockets/bufferutil)
 
 ## Contribute ##
-Feel free to contribute or file an issue if you have a bug or feature request.<br>
 If you have questions or just want to test the bot you can [join the Burgbuilder discord server](https://discord.gg/MnZ7eaP).
+Feel free to contribute or file an issue if you have a bug or feature request.<br>
+Please run `npm run lint` and fix all occuring issues before submiting a PR.
