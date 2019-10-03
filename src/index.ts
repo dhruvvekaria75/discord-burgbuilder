@@ -1,15 +1,14 @@
+require('dotenv').config()
+
 import * as discord from "discord.js";
 import { GameManager } from "./gameManager";
 import * as messageHandler from "./messageHandler";
 import { Game } from "./game";
 
-//Config file
-const config = require("../config.json");
-
 const client = new discord.Client();
 
 client.once('ready', () => {
-    console.log("Discord Burgbuilder ready");
+    console.log("Bot ready");
 
     Game.CLIENT = client;
 
@@ -18,5 +17,5 @@ client.once('ready', () => {
     let gM = new GameManager();
     messageHandler.init(client, gM);
 });
-
-client.login(config.token);
+console.log("Discord Burgbuilder started in " + process.env.NODE_ENV || "development" + " mode");
+client.login(process.env.TOKEN);
