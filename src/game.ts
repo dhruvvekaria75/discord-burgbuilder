@@ -1,6 +1,7 @@
 import * as discord from "discord.js";
 import {Tile, Castle, CastleWall2, CastleWall3, Grass, White} from "./tiles";
-let config = require("../config.json");
+
+const isBeta = process.env.NODE_ENV == "development" ? true : false;
 
 var NEWID: number = 0; // id for new game
 
@@ -10,13 +11,13 @@ const reactionEmoji = ['0⃣','1⃣','2⃣','3⃣','4⃣','5⃣','6⃣','7⃣','
 //white tile
 const WHITE = new White();
 const MAXPLAYER = 4; //max number of players in a game
-const TURNS = config.beta ? 5 : 40;
+const TURNS = isBeta ? 5 : 40;
 
 export class Game {
     id: number; //unique id of game
     creator: discord.User; //only for custom games
     players: Array<discord.User> = new Array<discord.User>(); // all players in game
-    private tiles: Tile[][]; //board as 2D array
+    tiles: Tile[][]; //board as 2D array
     private dragTiles: Tile[] = new Array<Tile>(80); //tiles that get dragged one after the other
     private turnPlayer: number = 0; //the index of the player whos turn it is
     private drag: number = 0; //the current index of dragpiles (TODO: replace with dragTiles.pop())
@@ -677,6 +678,7 @@ export class Game {
             let complex = new CastleComplex();
             tile.complex = complex;
             complex.addOwner(tile.owner);
+            complex.addTile(tile);
             this.castles.push(complex);
         }
 
@@ -750,8 +752,9 @@ export class Game {
         }
 
         //castlewall 3
-        if(tile instanceof CastleWall2) {
-            //rotation 0
+        if(tile instanceof CastleWall3) {
+            //rotation 0 
+            //TODO: not working
             if(tile.rotation == 0) {
                 tTile = x == 9 ? WHITE : this.tiles[x+1][y];
                 if(tTile instanceof White) {
@@ -818,16 +821,17 @@ export class Game {
      * @param tile tile in evaluation
      * @param tTile test tile
      */
-    setComplex(tile: Tile, tTile: Tile) {
+    private setComplex(tile: Tile, tTile: Tile) {
         if(tile.complex && tTile.complex) {
             //TODO: testing
-            tile.complex.joinOwners(tTile.complex.owners);
+            tile.complex.joinCastles(tTile.complex.owners, tTile.complex.tiles);
             tile.complex.finished = tTile.complex.finished ? tile.complex.finished : false;
             this.castles.splice(this.castles.findIndex(c => c == tTile.complex), 1);
             tTile.complex = tile.complex;
         } else if(tile.complex != (null || undefined)) {
             tTile.complex = tile.complex;
             tile.complex.addOwner(tTile.owner);
+            tile.complex.addTile(tTile);
         } else {
             tile.complex = new CastleComplex();
             this.castles.push(tile.complex);
@@ -841,10 +845,14 @@ export class Game {
 export class CastleComplex {
     finished: boolean = true;
     owners: Map<discord.User, number> = new Map<discord.User, number>();
-    //tile: Array<Tile> = new Array<Tile>();
+    tiles: Array<Tile> = new Array<Tile>();
 
     constructor(finished?:boolean) {
         if(finished) this.finished = finished;
+    }
+
+    addTile(tile: Tile) {
+        this.tiles.find(t => t == tile) ? null : this.tiles.push(tile);
     }
 
     addOwner(user: discord.User) {
@@ -855,7 +863,7 @@ export class CastleComplex {
         }
     }
 
-    joinOwners(o: Map<discord.User, number>) {
+    joinCastles(o: Map<discord.User, number>, t: Array<Tile>) {
         o.forEach((num, user) => {
             if(this.owners.has(user)) {
                 this.owners.set(user, this.owners.get(user) + num);
@@ -863,5 +871,7 @@ export class CastleComplex {
                 this.owners.set(user, num);
             }
         });
+
+        t.forEach(test => this.addTile(test));
     }
 }

@@ -1,35 +1,35 @@
 import * as discord from "discord.js";
 import { GameManager } from "./gameManager";
-let config = require("../config.json");
+const isBeta = process.env.NODE_ENV == "development" ? true : false;
 
 export function init(client: discord.Client, gM: GameManager) {
     client.on('message', message => {
         let split = message.content.split(" ");
         let msg = split[0] + ' ' + split[1];
         switch(msg) {
-            case config.beta ? '!bbb queue': '!bb queue':
+            case isBeta ? '!bbb queue': '!bb queue':
                 gM.queue(message);
                 return;
-            case config.beta ? '!bbb game': '!bb game':
+            case isBeta ? '!bbb game': '!bb game':
                 gM.createCustomGame(message);
                 return;
-            case config.beta ? '!bbb join': '!bb join':
+            case isBeta ? '!bbb join': '!bb join':
                 gM.joinGame(message);
                 return;
             //only for testing purposes
             case '!bbb solo':
-                if(config.beta)gM.soloGame(message);
+                if(isBeta)gM.soloGame(message);
                 break;
-            case config.beta ? '!bbb leave': '!bb leave':
+            case isBeta ? '!bbb leave': '!bb leave':
                 gM.leaveGame(message);
                 break;
-            case config.beta ? '!bbb start': '!bb start':
+            case isBeta ? '!bbb start': '!bb start':
                 gM.startGame(message);
                 break;
-            case config.beta ? '!bbb help': '!bb help':
+            case isBeta ? '!bbb help': '!bb help':
                 message.channel.send(printHelp());
                 break;
-            case config.beta ? '!bbb rotation': '!bb rotation':
+            case isBeta ? '!bbb rotation': '!bb rotation':
                 message.channel.send(rotationMessage(client));
                 break;
             default:

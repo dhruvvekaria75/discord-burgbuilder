@@ -1,18 +1,12 @@
 # Burgbuilder #
-![Banner](https://cdn.drachenfrucht1.de/banner.png)
+![Banner](https://github.com/Drachenfrucht1/discord-burgbuilder/blob/master/docs/banner_bb.png)
 
 Burgbuilder is a game for discord.<br>
 It is inspired by the board game Carcassonne.<br>
 Created for [Discord Hack Week 2019](https://blog.discordapp.com/discord-community-hack-week-build-and-create-alongside-us-6b2a7b7bba33)
 
-Join the [Burgbuilder discord server](https://discord.gg/ae2avNc) to get acces to the hosted bot.<br>
+Join the [Burgbuilder discord server](https://discord.gg/MnZ7eaP) to get acces to the hosted bot.<br>
 If you want to selfhost the bot go to Setup to check how to set it up correctly.
-
-# Note #
-The point system isn't working properly at the moment but the main gameplay is working so far.<br>
-I didn't have the time to fix it before submitting the bot.<br>
-I will try to fix it on a separate branch, after the submissions for Hack Week closed.<br>
-Please don't judge this branch as its commits will be after the deadline.<br>
 
 ## Usage ##
 Type ```!bb help``` to view the help page<br>
@@ -21,20 +15,22 @@ Type ```!bb queue``` to join the queue and wait for a random game<br>
 Type ```!bb game``` to create a custom game to play with your friends.<br>
 Type ```!bb join <id>``` to join a custom game<br>
 Type ```!bb start``` to start a game (only possible when you created a custom game first).<br>
+The prefix changes to `!bbb` when and the additional command `!bbb solo` becomes available when using development mode. `!bbb solo` starts a single player game for testing purposes.
+
 
 ### Game ###
 At the beginning of the game you will be messaged with a blank 10x10 board.<br>
-![start board](https://cdn.drachenfrucht1.de/start.png)
+![start board](https://github.com/Drachenfrucht1/discord-burgbuilder/blob/master/docs/start.png)
 
 When it's your turn you will be messaged with a tile you can now place on board.<br>
 React to the appropriate emojis to specify your prefered placement<br>
 Start reacting when all messages and reactions have fully loaded.<br>
 React to the stop sign to submit your choise.<br>
 The rotation is clockwise.<br>
-![tile placement](https://cdn.drachenfrucht1.de/selection.png)
+![tile placement](https://github.com/Drachenfrucht1/discord-burgbuilder/blob/master/docs/selection.png)
 
 After that you will see your placement on the board.<br>
-![](https://cdn.drachenfrucht1.de/placement.png)<br>
+![](https://github.com/Drachenfrucht1/discord-burgbuilder/blob/master/docs/placement.png)<br>
 There are 40 turns in total. With a total of 4 players per match it's 10 turns per player.
 
 ### Tile placement ###
@@ -66,6 +62,8 @@ You have to setup the picture in the img folder as emojis to a guild the bot is 
 4. Run ```npm start``` to start the bot
 5. Have fun playing with the bot!!!
 
+Use `npm run start:dev` instead to start the bot in development mode.
+
 #### With Docker ####
 1. Clone this repo
 2. ```cd``` into the directory, rename example-config.json to config.json and replace token with your bot token
@@ -79,4 +77,4 @@ You have to setup the picture in the img folder as emojis to a guild the bot is 
 
 ## Contribute ##
 Feel free to contribute or file an issue if you have a bug or feature request.<br>
-If you have questions or just want to test the bot you can [join the Burgbuilder discord server](https://discord.gg/ae2avNc).
+If you have questions or just want to test the bot you can [join the Burgbuilder discord server](https://discord.gg/MnZ7eaP).

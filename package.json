@@ -1,11 +1,16 @@
 {
-  "name": "dab",
+  "name": "discord-bugbuilder",
   "version": "1.0.0",
-  "description": "A autobattle game written as a discord bot",
-  "repository": {"url": "https://github.com/Drachenfrucht1/discord-burgbuilder", "type": "git"},
+  "description": "A discord game inspired by carcassonne",
+  "repository": {
+    "url": "https://github.com/Drachenfrucht1/discord-burgbuilder",
+    "type": "git"
+  },
   "main": "./src/index.js",
   "scripts": {
-    "start": "tsc && node ./src/index.js",
+    "start:prod": "tsc && npx cross-env NODE_ENV=production node ./src/index.js",
+    "start:dev": "tsc && npx cross-env NODE_ENV=development node ./src/index.js",
+    "start": "npm run start:prod",
     "debug": "tsc && node --inspect ./src/index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -13,7 +18,8 @@
   "license": "MIT",
   "dependencies": {
     "bufferutil": "^4.0.1",
-    "discord.js": "^11.5.1"
+    "discord.js": "^11.5.1",
+    "dotenv": "^8.1.0"
   },
   "devDependencies": {
     "@types/node": "^12.0.10",
