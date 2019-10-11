@@ -56,20 +56,22 @@ The player with the most points will (obviously) win the game.<br>
 ## Setup ##
 You have to setup the picture in the img folder as emojis to a guild the bot is a user of.
 ##### Without Docker ####
-1. Clone this repo
-2. ```cd``` into the directory and do ```npm install```
-3. Rename example-config.json to config.json and replace token with your bot token
-4. Run ```npm start``` to start the bot
+1. Clone this repo using `git clone https://github.com/Drachenfrucht1/discord-burgbuilder.git`
+2. `cd` into the directory and run `npm install`
+3. Rename .env.example to .env and replace paste your bot token
+4. Run `npm start` to start the bot
 5. Have fun playing with the bot!!!
 
 Use `npm run start:dev` instead to start the bot in development mode.
 
 #### With Docker ####
-1. Clone this repo
-2. ```cd``` into the directory, rename example-config.json to config.json and replace token with your bot token
-3. Run ```docker build -t drachenfrucht1/burg-builder .```
-4. Start the docker container by typing ```docker run -d drachenfrucht1/burg-builder```
+1. Clone this repo using `git clone https://github.com/Drachenfrucht1/discord-burgbuilder.git`
+2. `cd` into the directory, rename .env.example to .env and paste your bot token
+3. Run `docker build -t drachenfrucht1/burg-builder .`
+4. Start the docker container by typing `docker run -d drachenfrucht1/burg-builder`
 5. Have fun playing with the bot!!!
+
+
 
 ## Used libraries: ##
 - [Discord.js](https://github.com/discordjs/discord.js)
@@ -78,4 +80,12 @@ Use `npm run start:dev` instead to start the bot in development mode.
 ## Contribute ##
 If you have questions or just want to test the bot you can [join the Burgbuilder discord server](https://discord.gg/MnZ7eaP).
 Feel free to contribute or file an issue if you have a bug or feature request.<br>
-Please run `npm run lint` and fix all occuring issues before submiting a PR.
+
+## Dev Setup ##
+You first have to fork the repo to contribute to it.<br>
+You can then clone your fork by running `git clone https://github.com/<YOUR USERNAME>/discord-burgbuilder.git`.<br>
+Rename .env.example to .env and paste your bot token.<br>
+Run `npm run start:dev` to start the bot in dev mode and test your changes.<br>
+Commit your changes after you edited the code.<br>
+The last step is to create a pull request to merge your changes.<br>
+**Please run `npm run lint` and fix all occuring issues before submiting a PR.**
