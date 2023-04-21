@@ -2,7 +2,7 @@ import * as discord from 'discord.js';
 import { Tile, Castle, CastleWall2, CastleWall3, Grass, White } from './tiles';
 import { CastleComplex } from './CastleComplex';
 
-const isBeta = process.env.NODE_ENV == 'development' ? true : false;
+const idsBeta = process.env.NODE_ENV == 'development' ? true : false;
 
 let NEWID = 0; // id for new game
 
